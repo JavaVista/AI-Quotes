@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1076064908723",
+    "project_id": "ai-quotes-46431",
+    "storage_bucket": "ai-quotes-46431.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1076064908723:android:fd3ec88bc475f4be5887c6",
+        "android_client_info": {
+          "package_name": "com.techno_logic.ai_quotes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIzoxsTEM2YvCOn2IjNy-nuYxQGgJkueA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
