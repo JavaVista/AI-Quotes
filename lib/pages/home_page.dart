@@ -9,15 +9,14 @@ class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  _HomePageState createState() => _HomePageState();
+  HomePageState createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> {
   final TextEditingController paragraphController = TextEditingController();
   final TextEditingController authorController = TextEditingController();
-  final TextEditingController categoryController = TextEditingController();
-  String randomQuote = '';
-  String randomAuthor = '';
+  String previewQuote = '';
+  String previewAuthor = '';
 
   @override
   Widget build(BuildContext context) {
@@ -50,52 +49,56 @@ class _HomePageState extends State<HomePage> {
                     paragraph = quote.paragraph;
                     author = quote.author;
                   }
-                  final newQuote = Quote(id: '', paragraph: paragraph, author: author, occupation: 'Unknown');
-                  await firebaseService.addQuote(newQuote);
                   setState(() {
-                    randomQuote = paragraph;
-                    randomAuthor = author;
+                    previewQuote = paragraph;
+                    previewAuthor = author;
                   });
                 },
-                child: const Text('Add Quote'),
+                child: const Text('Preview Quote'),
               ),
+              const SizedBox(height: 20),
+              if (previewQuote.isNotEmpty)
+                Card(
+                  child: ListTile(
+                    title: Text(previewQuote),
+                    subtitle: Text(previewAuthor),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.add),
+                      onPressed: () {
+                        final newQuote = Quote(
+                            id: '',
+                            paragraph: previewQuote,
+                            author: previewAuthor,
+                            occupation: 'Unknown');
+                        Navigator.pushNamed(context, '/quotes',
+                            arguments: newQuote);
+                      },
+                    ),
+                  ),
+                ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
                   final quote = await quoteService.fetchRandomQuote();
                   setState(() {
-                    randomQuote = quote.paragraph;
-                    randomAuthor = quote.author;
+                    previewQuote = quote.paragraph;
+                    previewAuthor = quote.author;
                   });
                 },
                 child: const Text('Get Random Quote'),
               ),
               const SizedBox(height: 20),
-              TextField(
-                controller: categoryController,
-                decoration: const InputDecoration(labelText: 'Category for AI Quote'),
-              ),
-              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
-                  final aiQuote = await geminiService.generateQuote(categoryController.text);
-                  final newQuote = Quote(id: '', paragraph: aiQuote, author: 'Gemini AI', occupation: 'AI');
-                  await firebaseService.addQuote(newQuote);
+                  final aiQuote =
+                      await geminiService.generateQuote('inspiration');
                   setState(() {
-                    randomQuote = aiQuote;
-                    randomAuthor = 'Gemini AI';
+                    previewQuote = aiQuote['quote'] ?? '';
+                    previewAuthor = 'Gemini AI';
                   });
                 },
                 child: const Text('Generate AI Quote'),
               ),
-              const SizedBox(height: 20),
-              if (randomQuote.isNotEmpty)
-                Card(
-                  child: ListTile(
-                    title: Text(randomQuote),
-                    subtitle: Text(randomAuthor),
-                  ),
-                ),
             ],
           ),
         ),
