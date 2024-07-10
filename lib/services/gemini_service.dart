@@ -23,3 +23,17 @@ class GeminiService {
     }
   }
 }
+
+// // Example usage:
+// void main() async {
+//   GeminiService geminiService = GeminiService();
+//   try {
+//     Map<String, String> quoteData = await geminiService.generateQuote("love");
+//     log.d("Quote: ${quoteData['quote']}");
+//     log.d("Author: ${quoteData['author']}");
+//     log.d("Category: ${quoteData['category']}");
+//     log.d("Occupation: ${quoteData['occupation']}");
+//   } catch (e) {
+//     log.d("Error: $e");
+//   }
+// }
