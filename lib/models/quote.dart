@@ -3,8 +3,15 @@ class Quote {
   final String paragraph;
   final String author;
   final String occupation;
+  bool isFavorite;
 
-  Quote({required this.id, required this.paragraph, required this.author, required this.occupation});
+  Quote({
+    required this.id,
+    required this.paragraph,
+    required this.author,
+    required this.occupation,
+    this.isFavorite = false,
+  });
 
   factory Quote.fromJson(Map<String, dynamic> json) {
     return Quote(
@@ -12,6 +19,7 @@ class Quote {
       paragraph: json['paragraph'],
       author: json['author'],
       occupation: json['occupation'],
+      isFavorite: json['isFavorite'] ?? false,
     );
   }
 
@@ -21,6 +29,7 @@ class Quote {
       'paragraph': paragraph,
       'author': author,
       'occupation': occupation,
+      'isFavorite': isFavorite,
     };
   }
 }
