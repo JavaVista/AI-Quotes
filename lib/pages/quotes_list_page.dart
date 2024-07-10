@@ -19,7 +19,7 @@ class QuotesListPage extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
           final quotes = snapshot.data!;
-          if (newQuote != null) {
+          if (newQuote != null && !quotes.any((q) => q.paragraph == newQuote.paragraph)) {
             quotes.add(newQuote);
           }
           return ListView.builder(
@@ -31,80 +31,34 @@ class QuotesListPage extends StatelessWidget {
                 child: ListTile(
                   title: Text(quote.paragraph),
                   subtitle: Text('${quote.author}, ${quote.occupation}'),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.favorite),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => FavoriteQuotePage(quote: quote)),
-                      );
-                    },
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          quote.isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: quote.isFavorite ? Colors.red : null,
+                        ),
+                        onPressed: () {
+                          final firebaseService = Provider.of<FirebaseService>(context, listen: false);
+                          quote.isFavorite = !quote.isFavorite;
+                          firebaseService.updateQuote(quote);
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          final firebaseService = Provider.of<FirebaseService>(context, listen: false);
+                          firebaseService.deleteQuote(quote.id);
+                        },
+                      ),
+                    ],
                   ),
                 ),
               );
             },
           );
         },
-      ),
-    );
-  }
-}
-
-class FavoriteQuotePage extends StatefulWidget {
-  final Quote quote;
-
-  const FavoriteQuotePage({super.key, required this.quote});
-
-  @override
-  FavoriteQuotePageState createState() => FavoriteQuotePageState();
-}
-
-class FavoriteQuotePageState extends State<FavoriteQuotePage> {
-  final TextEditingController occupationController = TextEditingController();
-  final TextEditingController categoryController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    final firebaseService = Provider.of<FirebaseService>(context);
-
-    return Scaffold(
-      appBar: AppBar(title: const Text('Favorite Quote')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Text(widget.quote.paragraph, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 20),
-            Text('- ${widget.quote.author}', style: const TextStyle(fontSize: 18, fontStyle: FontStyle.italic)),
-            TextField(
-              controller: occupationController,
-              decoration: const InputDecoration(labelText: 'Occupation'),
-            ),
-            TextField(
-              controller: categoryController,
-              decoration: const InputDecoration(labelText: 'Category'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                final updatedQuote = Quote(
-                  id: widget.quote.id,
-                  paragraph: widget.quote.paragraph,
-                  author: widget.quote.author,
-                  occupation: occupationController.text,
-                );
-                firebaseService.addQuote(updatedQuote);
-              },
-              child: const Text('Save to Favorites'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                firebaseService.deleteQuote(widget.quote.id);
-              },
-              child: const Text('Delete from Favorites'),
-            ),
-          ],
-        ),
       ),
     );
   }
