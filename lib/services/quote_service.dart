@@ -29,11 +29,10 @@ class QuoteService {
                   id: '',
                   paragraph: quoteJson['q'],
                   author: quoteJson['a'],
+                  imageUrl: quoteJson['i'],
                   occupation: 'Unknown',
                 ))
             .toList();
-
-        log.d("Received data ZenQuotes: $_cachedQuotes");
       } else {
         log.d("Error fetching quotes ZenQuotes: ${response.statusCode}");
       }
@@ -53,7 +52,6 @@ class QuoteService {
       await _fetchAndCacheQuotes();
     }
     if (_cachedQuotes.isNotEmpty) {
-      log.d("Random Quote: $_cachedQuotes");
       final randomIndex = Random().nextInt(_cachedQuotes.length);
       return _cachedQuotes[randomIndex];
     }

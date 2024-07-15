@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:ai_quotes_app/services/quote_service.dart';
 import 'package:ai_quotes_app/services/gemini_service.dart';
@@ -18,8 +19,10 @@ class HomePageState extends State<HomePage> {
   final TextEditingController authorController = TextEditingController();
   String previewQuote = '';
   String previewAuthor = '';
+  String previewImageUrl = '';
   String previewOccupation = 'Unknown';
   final uuid = const Uuid();
+  final log = Logger();
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +45,7 @@ class HomePageState extends State<HomePage> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/background.jpg'),
+            image: AssetImage('assets/ai_quotes_bkg_zen.jpg'),
             fit: BoxFit.cover,
           ),
         ),
@@ -62,7 +65,10 @@ class HomePageState extends State<HomePage> {
                         paragraph: previewQuote,
                         author: previewAuthor,
                         occupation: previewOccupation,
+                        imageUrl: previewImageUrl,
                       );
+                      log.d(
+                          'This is the newQuote: $newQuote.paragraph $newQuote.imageUrl');
                       firebaseService.addQuote(newQuote);
                       Navigator.pushNamed(context, '/quotes');
                     },
@@ -90,6 +96,7 @@ class HomePageState extends State<HomePage> {
                 previewQuote = quote.paragraph;
                 previewAuthor = quote.author;
                 previewOccupation = 'Unknown';
+                previewImageUrl = quote.imageUrl;
               });
             },
             child: const Icon(Icons.shuffle),
@@ -97,11 +104,13 @@ class HomePageState extends State<HomePage> {
           const SizedBox(height: 10),
           FloatingActionButton(
             onPressed: () async {
-              final aiQuote = await geminiService.generateQuote('inspiration');
+              final aiQuote = await geminiService.generateQuote('pain');
+
               setState(() {
                 previewQuote = aiQuote['quote'] ?? '';
                 previewAuthor = aiQuote['author'] ?? 'Gemini';
                 previewOccupation = aiQuote['occupation'] ?? 'AI';
+                previewImageUrl = '';
               });
             },
             child: const Icon(Icons.stars),
@@ -149,6 +158,7 @@ class HomePageState extends State<HomePage> {
                       previewQuote = paragraphController.text;
                       previewAuthor = authorController.text;
                       previewOccupation = 'Unknown';
+                      previewImageUrl = '';
                     });
                     Navigator.of(context).pop();
                   },

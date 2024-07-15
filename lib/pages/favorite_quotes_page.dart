@@ -1,3 +1,4 @@
+import 'package:ai_quotes_app/utils/image_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ai_quotes_app/models/quote.dart';
@@ -24,6 +25,9 @@ class FavoriteQuotesPage extends StatelessWidget {
               return Card(
                 margin: const EdgeInsets.all(8.0),
                 child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: getAuthorImage(quote),
+                  ),
                   title: Text(quote.paragraph),
                   subtitle: Text('${quote.author}, ${quote.occupation}'),
                   trailing: IconButton(

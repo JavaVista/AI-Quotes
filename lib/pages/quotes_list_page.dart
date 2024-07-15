@@ -1,3 +1,4 @@
+import 'package:ai_quotes_app/utils/image_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ai_quotes_app/models/quote.dart';
@@ -19,7 +20,8 @@ class QuotesListPage extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
           final quotes = snapshot.data!;
-          if (newQuote != null && !quotes.any((q) => q.paragraph == newQuote.paragraph)) {
+          if (newQuote != null &&
+              !quotes.any((q) => q.paragraph == newQuote.paragraph)) {
             quotes.add(newQuote);
           }
           return ListView.builder(
@@ -29,6 +31,9 @@ class QuotesListPage extends StatelessWidget {
               return Card(
                 margin: const EdgeInsets.all(8.0),
                 child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: getAuthorImage(quote),
+                  ),
                   title: Text(quote.paragraph),
                   subtitle: Text('${quote.author}, ${quote.occupation}'),
                   trailing: Row(
@@ -36,11 +41,15 @@ class QuotesListPage extends StatelessWidget {
                     children: [
                       IconButton(
                         icon: Icon(
-                          quote.isFavorite ? Icons.favorite : Icons.favorite_border,
+                          quote.isFavorite
+                              ? Icons.favorite
+                              : Icons.favorite_border,
                           color: quote.isFavorite ? Colors.red : null,
                         ),
                         onPressed: () {
-                          final firebaseService = Provider.of<FirebaseService>(context, listen: false);
+                          final firebaseService = Provider.of<FirebaseService>(
+                              context,
+                              listen: false);
                           quote.isFavorite = !quote.isFavorite;
                           firebaseService.updateQuote(quote);
                         },
@@ -48,7 +57,9 @@ class QuotesListPage extends StatelessWidget {
                       IconButton(
                         icon: const Icon(Icons.delete),
                         onPressed: () {
-                          final firebaseService = Provider.of<FirebaseService>(context, listen: false);
+                          final firebaseService = Provider.of<FirebaseService>(
+                              context,
+                              listen: false);
                           firebaseService.deleteQuote(quote.id);
                         },
                       ),
@@ -63,3 +74,4 @@ class QuotesListPage extends StatelessWidget {
     );
   }
 }
+
