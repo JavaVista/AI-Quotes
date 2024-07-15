@@ -70,6 +70,7 @@ class HomePageState extends State<HomePage> {
                       log.d(
                           'This is the newQuote: $newQuote.paragraph $newQuote.imageUrl');
                       firebaseService.addQuote(newQuote);
+                      _clearPreview();
                       Navigator.pushNamed(context, '/quotes');
                     },
                   ),
@@ -118,14 +119,18 @@ class HomePageState extends State<HomePage> {
           const SizedBox(height: 10),
           FloatingActionButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/favorites');
+              Navigator.pushNamed(context, '/favorites').then((_) {
+                _clearPreview();
+              });
             },
             child: const Icon(Icons.favorite),
           ),
           const SizedBox(height: 10),
           FloatingActionButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/quotes');
+              Navigator.pushNamed(context, '/quotes').then((_) {
+                _clearPreview();
+              });
             },
             child: const Icon(Icons.list),
           ),
@@ -170,5 +175,14 @@ class HomePageState extends State<HomePage> {
         );
       },
     );
+  }
+
+  void _clearPreview() {
+    setState(() {
+      previewQuote = '';
+      previewAuthor = '';
+      previewOccupation = 'Unknown';
+      previewImageUrl = '';
+    });
   }
 }

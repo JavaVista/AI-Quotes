@@ -16,11 +16,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(const AIQuoteApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class AIQuoteApp extends StatelessWidget {
+  const AIQuoteApp({super.key});
 
   @override
   Widget build(BuildContext context) {
