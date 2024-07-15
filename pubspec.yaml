@@ -73,6 +73,10 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
    - .env
+   - assets/ai_quotes_bkg_zen.jpg
+   - assets/google-gemini-icon.png
+   - assets/half-face-selfie-on-phone-screen-in-a-hand.png
+  # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
