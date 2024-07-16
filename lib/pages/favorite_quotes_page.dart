@@ -1,3 +1,4 @@
+import 'package:ai_quotes_app/theme/typography.dart';
 import 'package:ai_quotes_app/utils/image_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +11,7 @@ class FavoriteQuotesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Favorite Quotes')),
+      appBar: AppBar(title: const Text('Favorite Quotes', style: AppTypography.heading)),
       body: StreamBuilder<List<Quote>>(
         stream: Provider.of<FirebaseService>(context).getFavoriteQuotes(),
         builder: (context, snapshot) {
@@ -28,8 +29,8 @@ class FavoriteQuotesPage extends StatelessWidget {
                   leading: CircleAvatar(
                     backgroundImage: getAuthorImage(quote),
                   ),
-                  title: Text(quote.paragraph),
-                  subtitle: Text('${quote.author}, ${quote.occupation}'),
+                  title: Text(quote.paragraph, style: AppTypography.cardText),
+                  subtitle: Text('${quote.author}, ${quote.occupation}', style: AppTypography.body),
                   trailing: IconButton(
                     icon: const Icon(Icons.favorite, color: Colors.red),
                     onPressed: () {

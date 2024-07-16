@@ -1,3 +1,5 @@
+import 'package:ai_quotes_app/theme/colors.dart';
+import 'package:ai_quotes_app/theme/typography.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +34,7 @@ class HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AI Quotes'),
+        title: const Text('AI Quotes', style: AppTypography.heading),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -45,45 +47,44 @@ class HomePageState extends State<HomePage> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/ai_quotes_bkg_zen.jpg'),
+            image: AssetImage('assets/images/ai_quotes_bkg_zen.jpg'),
             fit: BoxFit.cover,
           ),
         ),
-        child: Column(
+        child: Stack(
           children: [
+            if (previewQuote.isEmpty)
+              const Center(
+                child: Text(
+                  'Welcome to AI Quotes',
+                  style: AppTypography.heading,
+                ),
+              ),
             if (previewQuote.isNotEmpty)
-              Card(
-                margin: const EdgeInsets.all(16.0),
-                child: ListTile(
-                  title: Text(previewQuote),
-                  subtitle: Text('$previewAuthor, $previewOccupation'),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () {
-                      final newQuote = Quote(
-                        id: uuid.v4(),
-                        paragraph: previewQuote,
-                        author: previewAuthor,
-                        occupation: previewOccupation,
-                        imageUrl: previewImageUrl,
-                      );
-                      log.d(
-                          'This is the newQuote: $newQuote.paragraph $newQuote.imageUrl');
-                      firebaseService.addQuote(newQuote);
-                      _clearPreview();
-                      Navigator.pushNamed(context, '/quotes');
-                    },
+              Center(
+                child: Card(
+                  margin: const EdgeInsets.all(16.0),
+                  child: ListTile(
+                    title: Text(previewQuote, style: AppTypography.cardText),
+                    subtitle: Text('$previewAuthor, $previewOccupation', style: AppTypography.body),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.add),
+                      onPressed: () {
+                        final newQuote = Quote(
+                          id: uuid.v4(),
+                          paragraph: previewQuote,
+                          author: previewAuthor,
+                          occupation: previewOccupation,
+                          imageUrl: previewImageUrl,
+                        );
+                        firebaseService.addQuote(newQuote);
+                        _clearPreview();
+                        Navigator.pushNamed(context, '/quotes');
+                      },
+                    ),
                   ),
                 ),
               ),
-            const Expanded(
-              child: Center(
-                child: Text(
-                  'Welcome to AI Quotes',
-                  style: TextStyle(fontSize: 24, color: Colors.white),
-                ),
-              ),
-            ),
           ],
         ),
       ),
@@ -144,7 +145,7 @@ class HomePageState extends State<HomePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Add a Quote'),
+          title: const Text('Add a Quote', style: AppTypography.heading,),
           content: SingleChildScrollView(
             child: Column(
               children: [
@@ -167,7 +168,7 @@ class HomePageState extends State<HomePage> {
                     });
                     Navigator.of(context).pop();
                   },
-                  child: const Text('Preview Quote'),
+                  child: const Text('Preview Quote', style: AppTypography.body),
                 ),
               ],
             ),

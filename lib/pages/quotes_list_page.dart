@@ -1,3 +1,4 @@
+import 'package:ai_quotes_app/theme/typography.dart';
 import 'package:ai_quotes_app/utils/image_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -34,8 +35,8 @@ class QuotesListPage extends StatelessWidget {
                   leading: CircleAvatar(
                     backgroundImage: getAuthorImage(quote),
                   ),
-                  title: Text(quote.paragraph),
-                  subtitle: Text('${quote.author}, ${quote.occupation}'),
+                  title: Text(quote.paragraph, style: AppTypography.cardText),
+                  subtitle: Text('${quote.author}, ${quote.occupation}', style: AppTypography.body),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
