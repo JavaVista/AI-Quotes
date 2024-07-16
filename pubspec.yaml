@@ -90,15 +90,13 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: AlegreyaSans
+    - family: GreatVibes
       fonts:
-        - asset: assets/fonts/AlegreyaSans-Regular.ttf
-        - asset: assets/fonts/AlegreyaSans-Bold.ttf
-          weight: 700
-    - family: GowunBatang
+        - asset: assets/fonts/GreatVibes-Regular.ttf
+    - family: Assistant
       fonts:
-        - asset: assets/fonts/GowunBatang-Regular.ttf
-        - asset: assets/fonts/GowunBatang-Bold.ttf
+        - asset: assets/fonts/Assistant-Regular.ttf
+        - asset: assets/fonts/Assistant-Bold.ttf
           weight: 700
   # fonts:
   #   - family: Schyler

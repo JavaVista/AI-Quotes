@@ -51,10 +51,22 @@ class HomePageState extends State<HomePage> {
         body: Stack(
           children: [
             if (previewQuote.isEmpty)
-              const Center(
-                child: Text(
-                  'Welcome to AI Quotes',
-                  style: AppTypography.heading,
+              Center(
+                child: RichText(
+                  text: const TextSpan(
+                    text: 'Welcome to ',
+                    style: AppTypography.mainTitle,
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: 'AI',
+                        style: AppTypography.subMainTitle,
+                      ),
+                      TextSpan(
+                        text: ' Quotes',
+                        style: AppTypography.mainTitle,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             if (previewQuote.isNotEmpty)
