@@ -1,6 +1,7 @@
 import 'package:ai_quotes_app/theme/colors.dart';
 import 'package:ai_quotes_app/theme/typography.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:ai_quotes_app/services/quote_service.dart';
@@ -32,26 +33,22 @@ class HomePageState extends State<HomePage> {
     final geminiService = Provider.of<GeminiService>(context);
     final firebaseService = Provider.of<FirebaseService>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('AI Quotes', style: AppTypography.heading),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              _showAddQuoteDialog(context);
-            },
-          ),
-        ],
-      ),
-      body: Container(
+    return Stack(children: [
+      Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/ai_quotes_bkg_zen.jpg'),
             fit: BoxFit.cover,
           ),
         ),
-        child: Stack(
+      ),
+      Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+        ),
+        body: Stack(
           children: [
             if (previewQuote.isEmpty)
               const Center(
@@ -66,7 +63,8 @@ class HomePageState extends State<HomePage> {
                   margin: const EdgeInsets.all(16.0),
                   child: ListTile(
                     title: Text(previewQuote, style: AppTypography.cardText),
-                    subtitle: Text('$previewAuthor, $previewOccupation', style: AppTypography.body),
+                    subtitle: Text('$previewAuthor, $previewOccupation',
+                        style: AppTypography.body),
                     trailing: IconButton(
                       icon: const Icon(Icons.add),
                       onPressed: () {
@@ -87,57 +85,88 @@ class HomePageState extends State<HomePage> {
               ),
           ],
         ),
+        floatingActionButton: SpeedDial(
+          icon: Icons.edit,
+          activeIcon: Icons.close,
+          backgroundColor: primaryColor,
+          overlayColor: Colors.black,
+          overlayOpacity: 0.5,
+          children: [
+            SpeedDialChild(
+              child: const Icon(Icons.add),
+              backgroundColor: Colors.white,
+              foregroundColor: primaryColor,
+              label: 'Add Quote',
+              labelStyle: AppTypography.body,
+              labelBackgroundColor: Colors.white,
+              onTap: () {
+                _showAddQuoteDialog(context);
+              },
+            ),
+            SpeedDialChild(
+              child: const Icon(Icons.shuffle),
+              backgroundColor: Colors.white,
+              foregroundColor: primaryColor,
+              label: 'Random Quote',
+              labelStyle: AppTypography.body,
+              labelBackgroundColor: Colors.white,
+              onTap: () async {
+                final quote = await quoteService.fetchRandomQuote();
+                setState(() {
+                  previewQuote = quote.paragraph;
+                  previewAuthor = quote.author;
+                  previewOccupation = 'Unknown';
+                  previewImageUrl = quote.imageUrl;
+                });
+              },
+            ),
+            SpeedDialChild(
+              child: const Icon(Icons.stars),
+              backgroundColor: Colors.white,
+              foregroundColor: primaryColor,
+              label: 'AI Quote',
+              labelStyle: AppTypography.body,
+              labelBackgroundColor: Colors.white,
+              onTap: () async {
+                final aiQuote = await geminiService.generateQuote('alien');
+                setState(() {
+                  previewQuote = aiQuote['quote'] ?? '';
+                  previewAuthor = aiQuote['author'] ?? 'Gemini';
+                  previewOccupation = aiQuote['occupation'] ?? 'AI';
+                  previewImageUrl = '';
+                });
+              },
+            ),
+            SpeedDialChild(
+              child: const Icon(Icons.favorite),
+              backgroundColor: Colors.white,
+              foregroundColor: primaryColor,
+              label: 'Favorites',
+              labelStyle: AppTypography.body,
+              labelBackgroundColor: Colors.white,
+              onTap: () {
+                Navigator.pushNamed(context, '/favorites').then((_) {
+                  _clearPreview();
+                });
+              },
+            ),
+            SpeedDialChild(
+              child: const Icon(Icons.list),
+              backgroundColor: Colors.white,
+              foregroundColor: primaryColor,
+              label: 'Quotes List',
+              labelStyle: AppTypography.body,
+              labelBackgroundColor: Colors.white,
+              onTap: () {
+                Navigator.pushNamed(context, '/quotes').then((_) {
+                  _clearPreview();
+                });
+              },
+            ),
+          ],
+        ),
       ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            onPressed: () async {
-              final quote = await quoteService.fetchRandomQuote();
-              setState(() {
-                previewQuote = quote.paragraph;
-                previewAuthor = quote.author;
-                previewOccupation = 'Unknown';
-                previewImageUrl = quote.imageUrl;
-              });
-            },
-            child: const Icon(Icons.shuffle),
-          ),
-          const SizedBox(height: 10),
-          FloatingActionButton(
-            onPressed: () async {
-              final aiQuote = await geminiService.generateQuote('pain');
-
-              setState(() {
-                previewQuote = aiQuote['quote'] ?? '';
-                previewAuthor = aiQuote['author'] ?? 'Gemini';
-                previewOccupation = aiQuote['occupation'] ?? 'AI';
-                previewImageUrl = '';
-              });
-            },
-            child: const Icon(Icons.stars),
-          ),
-          const SizedBox(height: 10),
-          FloatingActionButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/favorites').then((_) {
-                _clearPreview();
-              });
-            },
-            child: const Icon(Icons.favorite),
-          ),
-          const SizedBox(height: 10),
-          FloatingActionButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/quotes').then((_) {
-                _clearPreview();
-              });
-            },
-            child: const Icon(Icons.list),
-          ),
-        ],
-      ),
-    );
+    ]);
   }
 
   void _showAddQuoteDialog(BuildContext context) {
@@ -145,7 +174,10 @@ class HomePageState extends State<HomePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Add a Quote', style: AppTypography.heading,),
+          title: const Text(
+            'Add a Quote',
+            style: AppTypography.heading,
+          ),
           content: SingleChildScrollView(
             child: Column(
               children: [
