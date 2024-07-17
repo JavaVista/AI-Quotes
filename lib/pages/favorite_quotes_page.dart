@@ -1,3 +1,4 @@
+import 'package:ai_quotes_app/theme/colors.dart';
 import 'package:ai_quotes_app/theme/typography.dart';
 import 'package:ai_quotes_app/utils/image_utils.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,9 @@ class FavoriteQuotesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Favorite Quotes', style: AppTypography.heading)),
+      appBar: AppBar(
+        title: const Text('Favorite Quotes', style: AppTypography.heading),
+      ),
       body: StreamBuilder<List<Quote>>(
         stream: Provider.of<FirebaseService>(context).getFavoriteQuotes(),
         builder: (context, snapshot) {
@@ -24,21 +27,59 @@ class FavoriteQuotesPage extends StatelessWidget {
             itemBuilder: (context, index) {
               final quote = favoriteQuotes[index];
               return Card(
-                margin: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: getAuthorImage(quote),
+                elevation: 4,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(30.0),
+                    bottomLeft: Radius.circular(30.0),
                   ),
-                  title: Text(quote.paragraph, style: AppTypography.cardText),
-                  subtitle: Text('${quote.author}, ${quote.occupation}', style: AppTypography.body),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.favorite, color: Colors.red),
-                    onPressed: () {
-                      final firebaseService =
-                          Provider.of<FirebaseService>(context, listen: false);
-                      quote.isFavorite = false;
-                      firebaseService.updateQuote(quote);
-                    },
+                ),
+                margin: const EdgeInsets.all(8.0),
+                child: Container(
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(30.0),
+                      bottomLeft: Radius.circular(30.0),
+                    ),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: primaryColor.withOpacity(0.25),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: getAuthorImage(quote),
+                      ),
+                      const SizedBox(width: 16.0),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(quote.paragraph, style: AppTypography.cardText),
+                            const SizedBox(height: 8.0),
+                            Text('${quote.author}, ${quote.occupation}',
+                                style: AppTypography.body),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.favorite, color: Colors.red),
+                        onPressed: () {
+                          final firebaseService =
+                              Provider.of<FirebaseService>(context,
+                                  listen: false);
+                          quote.isFavorite = false;
+                          firebaseService.updateQuote(quote);
+                        },
+                      ),
+                    ],
                   ),
                 ),
               );

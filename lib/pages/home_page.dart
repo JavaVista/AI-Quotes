@@ -72,110 +72,151 @@ class HomePageState extends State<HomePage> {
             if (previewQuote.isNotEmpty)
               Center(
                 child: Card(
-                  margin: const EdgeInsets.all(16.0),
-                  child: ListTile(
-                    title: Text(previewQuote, style: AppTypography.cardText),
-                    subtitle: Text('$previewAuthor, $previewOccupation',
-                        style: AppTypography.body),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: () {
-                        final newQuote = Quote(
-                          id: uuid.v4(),
-                          paragraph: previewQuote,
-                          author: previewAuthor,
-                          occupation: previewOccupation,
-                          imageUrl: previewImageUrl,
-                        );
-                        firebaseService.addQuote(newQuote);
-                        _clearPreview();
-                        Navigator.pushNamed(context, '/quotes');
-                      },
+                  elevation: 8,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(30.0),
+                      bottomLeft: Radius.circular(30.0),
+                    ),
+                  ),
+                  margin: const EdgeInsets.all(30.0),
+                  shadowColor: primaryColor.withOpacity(0.5),
+                  child: Container(
+                    padding: const EdgeInsets.all(20.0),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(30.0),
+                        bottomLeft: Radius.circular(30.0),
+                      ),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: primaryColor.withOpacity(0.25),
+                          spreadRadius: 5,
+                          blurRadius: 10,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(previewQuote, style: AppTypography.cardText),
+                        const SizedBox(height: 10),
+                        Text('$previewAuthor, $previewOccupation',
+                            style: AppTypography.body),
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed: () {
+                              final newQuote = Quote(
+                                id: uuid.v4(),
+                                paragraph: previewQuote,
+                                author: previewAuthor,
+                                occupation: previewOccupation,
+                                imageUrl: previewImageUrl,
+                              );
+                              firebaseService.addQuote(newQuote);
+                              _clearPreview();
+                              Navigator.pushNamed(context, '/quotes');
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ),
           ],
         ),
-        floatingActionButton: SpeedDial(
-          icon: Icons.edit,
-          activeIcon: Icons.close,
-          backgroundColor: primaryColor,
-          overlayColor: Colors.black,
-          overlayOpacity: 0.5,
-          children: [
-            SpeedDialChild(
-              child: const Icon(Icons.add),
-              backgroundColor: Colors.white,
-              foregroundColor: primaryColor,
-              label: 'Add Quote',
-              labelStyle: AppTypography.body,
-              labelBackgroundColor: Colors.white,
-              onTap: () {
-                _showAddQuoteDialog(context);
-              },
-            ),
-            SpeedDialChild(
-              child: const Icon(Icons.shuffle),
-              backgroundColor: Colors.white,
-              foregroundColor: primaryColor,
-              label: 'Random Quote',
-              labelStyle: AppTypography.body,
-              labelBackgroundColor: Colors.white,
-              onTap: () async {
-                final quote = await quoteService.fetchRandomQuote();
-                setState(() {
-                  previewQuote = quote.paragraph;
-                  previewAuthor = quote.author;
-                  previewOccupation = 'Unknown';
-                  previewImageUrl = quote.imageUrl;
-                });
-              },
-            ),
-            SpeedDialChild(
-              child: const Icon(Icons.stars),
-              backgroundColor: Colors.white,
-              foregroundColor: primaryColor,
-              label: 'AI Quote',
-              labelStyle: AppTypography.body,
-              labelBackgroundColor: Colors.white,
-              onTap: () async {
-                final aiQuote = await geminiService.generateQuote('alien');
-                setState(() {
-                  previewQuote = aiQuote['quote'] ?? '';
-                  previewAuthor = aiQuote['author'] ?? 'Gemini';
-                  previewOccupation = aiQuote['occupation'] ?? 'AI';
-                  previewImageUrl = '';
-                });
-              },
-            ),
-            SpeedDialChild(
-              child: const Icon(Icons.favorite),
-              backgroundColor: Colors.white,
-              foregroundColor: primaryColor,
-              label: 'Favorites',
-              labelStyle: AppTypography.body,
-              labelBackgroundColor: Colors.white,
-              onTap: () {
-                Navigator.pushNamed(context, '/favorites').then((_) {
-                  _clearPreview();
-                });
-              },
-            ),
-            SpeedDialChild(
-              child: const Icon(Icons.list),
-              backgroundColor: Colors.white,
-              foregroundColor: primaryColor,
-              label: 'Quotes List',
-              labelStyle: AppTypography.body,
-              labelBackgroundColor: Colors.white,
-              onTap: () {
-                Navigator.pushNamed(context, '/quotes').then((_) {
-                  _clearPreview();
-                });
-              },
-            ),
-          ],
+        floatingActionButton: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: secondaryColor, width: 2.0),
+          ),
+          child: SpeedDial(
+            icon: Icons.edit,
+            activeIcon: Icons.close,
+            backgroundColor: Colors.white,
+            foregroundColor: secondaryColor,
+            overlayColor: Colors.black,
+            overlayOpacity: 0.5,
+            children: [
+              SpeedDialChild(
+                child: const Icon(Icons.add),
+                backgroundColor: Colors.white,
+                foregroundColor: secondaryColor,
+                label: 'Add Quote',
+                labelStyle: AppTypography.body,
+                labelBackgroundColor: Colors.white,
+                onTap: () {
+                  _showAddQuoteDialog(context);
+                },
+              ),
+              SpeedDialChild(
+                child: const Icon(Icons.shuffle),
+                backgroundColor: Colors.white,
+                foregroundColor: secondaryColor,
+                label: 'Random Quote',
+                labelStyle: AppTypography.body,
+                labelBackgroundColor: Colors.white,
+                onTap: () async {
+                  final quote = await quoteService.fetchRandomQuote();
+                  setState(() {
+                    previewQuote = quote.paragraph;
+                    previewAuthor = quote.author;
+                    previewOccupation = 'Unknown';
+                    previewImageUrl = quote.imageUrl;
+                  });
+                },
+              ),
+              SpeedDialChild(
+                child: const Icon(Icons.stars),
+                backgroundColor: Colors.white,
+                foregroundColor: secondaryColor,
+                label: 'AI Quote',
+                labelStyle: AppTypography.body,
+                labelBackgroundColor: Colors.white,
+                onTap: () async {
+                  final aiQuote = await geminiService.generateQuote('alien');
+                  setState(() {
+                    previewQuote = aiQuote['quote'] ?? '';
+                    previewAuthor = aiQuote['author'] ?? 'Gemini';
+                    previewOccupation = aiQuote['occupation'] ?? 'AI';
+                    previewImageUrl = '';
+                  });
+                },
+              ),
+              SpeedDialChild(
+                child: const Icon(Icons.favorite),
+                backgroundColor: Colors.white,
+                foregroundColor: secondaryColor,
+                label: 'Favorites',
+                labelStyle: AppTypography.body,
+                labelBackgroundColor: Colors.white,
+                onTap: () {
+                  Navigator.pushNamed(context, '/favorites').then((_) {
+                    _clearPreview();
+                  });
+                },
+              ),
+              SpeedDialChild(
+                child: const Icon(Icons.list),
+                backgroundColor: Colors.white,
+                foregroundColor: secondaryColor,
+                label: 'Quotes List',
+                labelStyle: AppTypography.body,
+                labelBackgroundColor: Colors.white,
+                onTap: () {
+                  Navigator.pushNamed(context, '/quotes').then((_) {
+                    _clearPreview();
+                  });
+                },
+              ),
+            ],
+          ),
         ),
       ),
     ]);
@@ -186,20 +227,47 @@ class HomePageState extends State<HomePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text(
-            'Add a Quote',
-            style: AppTypography.heading,
-          ),
-          content: SingleChildScrollView(
+          contentPadding: EdgeInsets.zero,
+          content: Container(
+            padding: const EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(30.0),
+                bottomLeft: Radius.circular(30.0),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: primaryColor.withOpacity(0.25),
+                  spreadRadius: 5,
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const Text(
+                  'Add a Quote',
+                  style: AppTypography.heading,
+                ),
+                const SizedBox(height: 20),
                 TextField(
                   controller: paragraphController,
-                  decoration: const InputDecoration(labelText: 'Quote'),
+                  decoration: const InputDecoration(
+                    labelText: 'Quote',
+                    border: OutlineInputBorder(),
+                  ),
                 ),
+                const SizedBox(height: 20),
                 TextField(
                   controller: authorController,
-                  decoration: const InputDecoration(labelText: 'Author'),
+                  decoration: const InputDecoration(
+                    labelText: 'Author',
+                    border: OutlineInputBorder(),
+                  ),
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
