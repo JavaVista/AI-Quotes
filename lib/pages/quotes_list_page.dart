@@ -49,7 +49,7 @@ class QuotesListPage extends StatelessWidget {
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: primaryColor.withOpacity(0.1),
+                        color: primaryColor.withOpacity(0.25),
                         spreadRadius: 2,
                         blurRadius: 5,
                         offset: const Offset(0, 2),
