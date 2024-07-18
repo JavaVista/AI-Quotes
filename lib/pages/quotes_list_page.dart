@@ -6,8 +6,15 @@ import 'package:provider/provider.dart';
 import 'package:ai_quotes_app/models/quote.dart';
 import 'package:ai_quotes_app/services/firebase_service.dart';
 
-class QuotesListPage extends StatelessWidget {
+class QuotesListPage extends StatefulWidget {
   const QuotesListPage({super.key});
+
+  @override
+  QuotesListPageState createState() => QuotesListPageState();
+}
+
+class QuotesListPageState extends State<QuotesListPage> {
+  final Map<String, bool> _isHovered = {};
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +76,47 @@ class QuotesListPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(quote.paragraph, style: AppTypography.cardText),
+                            Text(quote.paragraph,
+                                style: AppTypography.cardText),
                             const SizedBox(height: 8.0),
-                            Text('${quote.author}, ${quote.occupation}',
-                                style: AppTypography.body),
+                            Row(
+                              children: [
+                                Text('${quote.author}, ',
+                                    style: AppTypography.body),
+                                GestureDetector(
+                                  onTap: () {
+                                    _showAddOccupationDialog(context, quote,
+                                        (updatedQuote) {
+                                      final firebaseService =
+                                          Provider.of<FirebaseService>(context,
+                                              listen: false);
+                                      firebaseService.updateQuote(updatedQuote);
+                                    });
+                                  },
+                                  child: MouseRegion(
+                                    cursor: SystemMouseCursors.click,
+                                    onEnter: (_) {
+                                      setState(() {
+                                        _isHovered[quote.id] = true;
+                                      });
+                                    },
+                                    onExit: (_) {
+                                      setState(() {
+                                        _isHovered[quote.id] = false;
+                                      });
+                                    },
+                                    child: Text(
+                                      quote.occupation,
+                                      style: AppTypography.body.copyWith(
+                                        color: _isHovered[quote.id] == true
+                                            ? tertiaryColor
+                                            : primaryColor,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
@@ -87,11 +131,7 @@ class QuotesListPage extends StatelessWidget {
                               color: quote.isFavorite ? Colors.red : null,
                             ),
                             onPressed: () {
-                              final firebaseService =
-                                  Provider.of<FirebaseService>(context,
-                                      listen: false);
-                              quote.isFavorite = !quote.isFavorite;
-                              firebaseService.updateQuote(quote);
+                              _toggleFavorite(quote);
                             },
                           ),
                           IconButton(
@@ -113,6 +153,93 @@ class QuotesListPage extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+
+  void _toggleFavorite(Quote quote) {
+    final updatedQuote = quote.copyWith(isFavorite: !quote.isFavorite);
+    final firebaseService =
+        Provider.of<FirebaseService>(context, listen: false);
+    firebaseService.updateQuote(updatedQuote);
+  }
+
+  void _showAddOccupationDialog(
+      BuildContext context, Quote quote, Function(Quote) onOccupationAdded) {
+    final TextEditingController occupationController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(30.0),
+              bottomLeft: Radius.circular(30.0),
+            ),
+          ),
+          contentPadding: const EdgeInsets.all(20.0),
+          content: Container(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(30.0),
+                bottomLeft: Radius.circular(30.0),
+              ),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: primaryColor.withOpacity(0.25),
+                  spreadRadius: 5,
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Add Occupation',
+                  style: AppTypography.heading,
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: occupationController,
+                  decoration: const InputDecoration(
+                    labelText: 'Occupation',
+                    border: OutlineInputBorder(
+                       borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(30.0),
+                        ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                final updatedQuote = quote.copyWith(
+                  occupation: occupationController.text.isEmpty
+                      ? 'Unknown'
+                      : occupationController.text,
+                );
+                onOccupationAdded(updatedQuote); // Call the callback function
+                Navigator.of(dialogContext).pop();
+              },
+              child: const Text('Add', style: AppTypography.body),
+            ),
+            TextButton(
+              onPressed: () {
+                occupationController.clear();
+                Navigator.of(dialogContext).pop();
+              },
+              child: const Text('Cancel', style: AppTypography.body),
+            ),
+          ],
+        );
+      },
     );
   }
 }

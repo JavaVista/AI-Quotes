@@ -254,7 +254,11 @@ class HomePageState extends State<HomePage> {
                     minLines: 2,
                     decoration: const InputDecoration(
                       labelText: 'Quote',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(30.0),
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -262,7 +266,11 @@ class HomePageState extends State<HomePage> {
                     controller: authorController,
                     decoration: const InputDecoration(
                       labelText: 'Author',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(30.0),
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -337,7 +345,11 @@ class HomePageState extends State<HomePage> {
                   controller: categoryController,
                   decoration: const InputDecoration(
                     labelText: 'Category',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(30.0),
+                      ),
+                    ),
                   ),
                 ),
               ],
