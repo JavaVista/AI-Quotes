@@ -20,6 +20,7 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   final TextEditingController paragraphController = TextEditingController();
   final TextEditingController authorController = TextEditingController();
+  final TextEditingController categoryController = TextEditingController();
   String previewQuote = '';
   String previewAuthor = '';
   String previewImageUrl = '';
@@ -83,20 +84,12 @@ class HomePageState extends State<HomePage> {
                   shadowColor: primaryColor.withOpacity(0.5),
                   child: Container(
                     padding: const EdgeInsets.all(20.0),
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
                         topRight: Radius.circular(30.0),
                         bottomLeft: Radius.circular(30.0),
                       ),
                       color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: primaryColor.withOpacity(0.25),
-                          spreadRadius: 5,
-                          blurRadius: 10,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -180,13 +173,7 @@ class HomePageState extends State<HomePage> {
                 labelStyle: AppTypography.body,
                 labelBackgroundColor: Colors.white,
                 onTap: () async {
-                  final aiQuote = await geminiService.generateQuote('alien');
-                  setState(() {
-                    previewQuote = aiQuote['quote'] ?? '';
-                    previewAuthor = aiQuote['author'] ?? 'Gemini';
-                    previewOccupation = aiQuote['occupation'] ?? 'AI';
-                    previewImageUrl = '';
-                  });
+                  _showCategoryDialog(context, geminiService);
                 },
               ),
               SpeedDialChild(
@@ -225,17 +212,109 @@ class HomePageState extends State<HomePage> {
   void _showAddQuoteDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
-          contentPadding: EdgeInsets.zero,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(30.0),
+              bottomLeft: Radius.circular(30.0),
+            ),
+          ),
+          contentPadding: const EdgeInsets.all(20.0),
           content: Container(
-            padding: const EdgeInsets.all(20.0),
             decoration: BoxDecoration(
-              color: Colors.white,
               borderRadius: const BorderRadius.only(
                 topRight: Radius.circular(30.0),
                 bottomLeft: Radius.circular(30.0),
               ),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: primaryColor.withOpacity(0.25),
+                  spreadRadius: 5,
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: SingleChildScrollView(
+              // Add SingleChildScrollView to avoid overflow issues
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Add a Quote',
+                    style: AppTypography.heading,
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: paragraphController,
+                    maxLines: null,
+                    minLines: 2,
+                    decoration: const InputDecoration(
+                      labelText: 'Quote',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: authorController,
+                    decoration: const InputDecoration(
+                      labelText: 'Author',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  previewQuote = paragraphController.text;
+                  previewAuthor = authorController.text;
+                  previewOccupation = 'Unknown';
+                  previewImageUrl = '';
+                });
+                Navigator.of(context).pop();
+              },
+              child: const Text('Preview Quote', style: AppTypography.body),
+            ),
+            TextButton(
+              onPressed: () {
+                paragraphController.clear();
+                authorController.clear();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel', style: AppTypography.body),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showCategoryDialog(BuildContext context, GeminiService geminiService) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(30.0),
+              bottomLeft: Radius.circular(30.0),
+            ),
+          ),
+          contentPadding: const EdgeInsets.all(20.0),
+          content: Container(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(30.0),
+                bottomLeft: Radius.circular(30.0),
+              ),
+              color: Colors.white,
               boxShadow: [
                 BoxShadow(
                   color: primaryColor.withOpacity(0.25),
@@ -250,41 +329,48 @@ class HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Add a Quote',
+                  'Enter a Category',
                   style: AppTypography.heading,
                 ),
                 const SizedBox(height: 20),
                 TextField(
-                  controller: paragraphController,
+                  controller: categoryController,
                   decoration: const InputDecoration(
-                    labelText: 'Quote',
+                    labelText: 'Category',
                     border: OutlineInputBorder(),
                   ),
-                ),
-                const SizedBox(height: 20),
-                TextField(
-                  controller: authorController,
-                  decoration: const InputDecoration(
-                    labelText: 'Author',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      previewQuote = paragraphController.text;
-                      previewAuthor = authorController.text;
-                      previewOccupation = 'Unknown';
-                      previewImageUrl = '';
-                    });
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Preview Quote', style: AppTypography.body),
                 ),
               ],
             ),
           ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                final category = categoryController.text;
+                if (category.isNotEmpty) {
+                  final aiQuote = await geminiService.generateQuote(category);
+                  if (mounted) {
+                    setState(() {
+                      previewQuote = aiQuote['quote'] ?? '';
+                      previewAuthor = aiQuote['author'] ?? 'Gemini';
+                      previewOccupation = aiQuote['occupation'] ?? 'AI';
+                      previewImageUrl = '';
+                    });
+                    categoryController.clear();
+                    Navigator.of(this.context).pop();
+                  }
+                }
+              },
+              child: const Text('Generate', style: AppTypography.body),
+            ),
+            TextButton(
+              onPressed: () {
+                categoryController.clear();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel', style: AppTypography.body),
+            ),
+          ],
         );
       },
     );
