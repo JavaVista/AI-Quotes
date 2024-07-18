@@ -1,4 +1,5 @@
 import 'package:ai_quotes_app/firebase_options.dart';
+import 'package:ai_quotes_app/pages/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -6,7 +7,6 @@ import 'package:ai_quotes_app/services/quote_service.dart';
 import 'package:ai_quotes_app/services/gemini_service.dart';
 import 'package:ai_quotes_app/services/firebase_service.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'pages/home_page.dart';
 import 'pages/quotes_list_page.dart';
 import 'pages/favorite_quotes_page.dart';
 
@@ -35,7 +35,7 @@ class AIQuoteApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const HomePage(),
+        home: const SplashScreen(),
         routes: {
           '/quotes': (context) => const QuotesListPage(),
           '/favorites': (context) => const FavoriteQuotesPage(),

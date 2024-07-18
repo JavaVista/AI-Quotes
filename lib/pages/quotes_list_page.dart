@@ -14,7 +14,10 @@ class QuotesListPage extends StatelessWidget {
     final newQuote = ModalRoute.of(context)?.settings.arguments as Quote?;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Quotes', style: AppTypography.heading)),
+      backgroundColor: backgroundGrey,
+      appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          title: const Text('Quotes', style: AppTypography.heading)),
       body: StreamBuilder<List<Quote>>(
         stream: Provider.of<FirebaseService>(context).getQuotes(),
         builder: (context, snapshot) {

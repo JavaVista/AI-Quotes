@@ -12,7 +12,9 @@ class FavoriteQuotesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: backgroundGrey,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         title: const Text('Favorite Quotes', style: AppTypography.heading),
       ),
       body: StreamBuilder<List<Quote>>(

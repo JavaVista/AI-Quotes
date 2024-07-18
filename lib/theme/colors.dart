@@ -15,3 +15,4 @@ const Color tertiaryColor = Color(0xFFffe7a5);
 
 const Color errorColor = Color(0xFFf8d8d8);
 
+const Color backgroundGrey = Color(0xFFf0f0f0);
