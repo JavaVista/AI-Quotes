@@ -5,14 +5,14 @@ class AppTypography {
   static const TextStyle mainTitle = TextStyle(
     fontFamily: 'GreatVibes',
     fontWeight: FontWeight.bold,
-    fontSize: 36,
+    fontSize: 40,
     color: primaryColor,
   );
 
     static const TextStyle subMainTitle = TextStyle(
     fontFamily: 'Assistant',
     fontWeight: FontWeight.bold,
-    fontSize: 36,
+    fontSize: 40,
     color: primaryColor,
   );
 
