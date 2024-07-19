@@ -31,6 +31,10 @@ class AIQuoteApp extends StatelessWidget {
         Provider(create: (_) => FirebaseService()),
       ],
       child: MaterialApp(
+        // Remove debug banner 
+        //(When you build your app for release, the debug banner is automatically removed. )
+        // Adding this for presentation purposes only
+        debugShowCheckedModeBanner: false, 
         title: 'AI Quotes',
         theme: ThemeData(
           primarySwatch: Colors.blue,
