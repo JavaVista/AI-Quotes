@@ -41,7 +41,6 @@ dependencies:
   cloud_firestore: ^5.0.2
   http: ^1.2.1
   provider: ^6.1.2
-  google_generative_ai: ^0.4.3
   logger: ^2.3.0
   flutter_dotenv: ^5.1.0
   uuid: ^4.4.0
